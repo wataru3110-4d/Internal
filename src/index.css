@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Self-hosted fonts only (no external CDN). Drop the .woff2 files into
+ * public/fonts/ — see public/fonts/README.md. If a file is missing the
+ * browser falls back to the system stack defined in tailwind.config.ts,
+ * so the app still renders (Japanese needs a system JP font, e.g. on
+ * Japanese Windows/macOS this is present by default).
+ */
+@font-face {
+  font-family: "Noto Sans JP";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/NotoSansJP.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Barlow Condensed";
+  font-style: normal;
+  font-weight: 600 700;
+  font-display: swap;
+  src: url("/fonts/BarlowCondensed.woff2") format("woff2");
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family:
+    "Noto Sans JP", system-ui, -apple-system, "Hiragino Kaku Gothic ProN",
+    "Yu Gothic", Meiryo, sans-serif;
+}
+
+/* 16:9 output: print the sheet at its native 1920x1080 onto a matching page. */
+@media print {
+  @page {
+    size: 1920px 1080px;
+    margin: 0;
+  }
+  body {
+    background: #fff;
+  }
+  /* Undo the on-screen fit-to-width scaling so print is full size. */
+  .sheet-scale-outer {
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+  .sheet-scale-box {
+    width: 1920px !important;
+    height: 1080px !important;
+    margin: 0 !important;
+  }
+  .sheet-scale-inner {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  .print\:hidden {
+    display: none !important;
+  }
+}
