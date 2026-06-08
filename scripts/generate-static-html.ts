@@ -214,7 +214,11 @@ function categoryPanel(category: CategoryDef, person: Person, average: Record<st
     </div>
     <div class="chart">${svg}</div>
     <div class="scores">${scoreRows}</div>
-    ${comment ? `<div class="comment">${esc(comment)}</div>` : ""}
+    ${
+      comment
+        ? `<div class="comment">${esc(comment)}</div>`
+        : `<div class="comment comment-empty">コメント未入力</div>`
+    }
   </section>`;
 }
 
@@ -264,7 +268,8 @@ const SHEET_CSS = `
   .row{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid ${DIVIDER};padding:6px 0;font-size:15px;color:${MUTED}}
   .row-label{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .row-val{flex-shrink:0;font-family:${FONT_NUM};font-variant-numeric:tabular-nums}
-  .comment{white-space:pre-line;border-radius:6px;background:#f5f5f5;padding:16px;font-size:12px;line-height:1.7;color:${MUTED}}
+  .comment{margin-top:auto;white-space:pre-line;border-radius:6px;background:#f5f5f5;padding:16px;font-size:12px;line-height:1.7;color:${MUTED};min-height:96px}
+  .comment-empty{color:#bbbbbb}
 `;
 
 // 画面では幅にフィット、印刷では原寸1920×1080
