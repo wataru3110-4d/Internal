@@ -35,6 +35,26 @@ npm run preview  # ローカル配信で public/data/assessments.csv を自動�
 エアギャップ環境へは `dist/` 一式を持ち込み、社内/ローカルの静的サーバで配信するか、
 `index.html` を `file://` で直接開いて画面右上の「CSV読込」から CSV を選択します。
 
+## 静的HTML書き出し（アプリを起動しない）
+
+アプリ（SPA）を立てずに、CSV から **そのまま開ける自己完結HTML** を一括生成します。
+ビューア本体と同じ `src/lib`（CSVパース・マスタ・チーム平均）をそのまま使うので
+見た目・集計はアプリと一致します。出力は React/Tailwind に実行時依存しません。
+
+```bash
+npm run generate                              # public/data/assessments.csv → dist-static/
+npm run generate -- path/to.csv out "チーム名"  # 入力CSV・出力先・チーム名を指定
+```
+
+生成物（`dist-static/`）:
+
+- `index.html` … メンバー一覧（各シートへのリンク・Total）
+- `sheets/*.html` … 1人 = 1ファイル（16:9。ブラウザの「印刷 / PDF」で資料化）
+- `all.html` … 全員分を1ページに連結（一括で PDF 化する用。ページ区切り入り）
+
+各ファイルは CSS・SVG をインライン化した単体HTMLなので、`file://` で直接開けて
+そのまま配布・印刷できます（外部CDN・外部フォント・外部画像に依存しません）。
+
 ## データの更新
 
 1. スプレッドシートを CSV でダウンロード。
