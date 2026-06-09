@@ -222,7 +222,9 @@ export function categoryPanel(
 
 // ---- 1人分のシート（AssessmentSheet / PersonHeader 相当） --------------------
 export function sheet(person: Person, data: AssessmentData): string {
-  const panels = CATEGORIES.map((c) => categoryPanel(c, person, data.teamAverage)).join("");
+  const panels = CATEGORIES.map((c) => categoryPanel(c, person, data.teamAverage)).join(
+    '<div class="vrule"></div>',
+  );
   return `<div class="sheet">
     <header class="sheet-head">
       <div class="who">
@@ -259,13 +261,13 @@ export const SHEET_CSS = `
   .total-val{font-family:${FONT_NUMBER};font-size:56px;font-weight:500;line-height:1;color:${INK}}
   .legend-row{display:flex;align-items:center;gap:8px;padding:32px 40px 0;font-size:12px;color:${MUTED}}
   .legend-label{white-space:nowrap}
-  .body{display:flex;flex:1;align-items:stretch;padding:24px 40px 32px}
-  .panel{flex:1;display:flex;flex-direction:column;gap:16px;padding:0 24px}
-  .panel + .panel{border-left:1px solid ${DIVIDER}}
+  .body{display:flex;flex:1;align-items:stretch;justify-content:center;gap:27.5px;padding:24px 0 32px}
+  .panel{width:520px;flex:none;display:flex;flex-direction:column;gap:16px;padding:0 24px}
+  .vrule{align-self:stretch;border-left:1px solid ${DIVIDER}}
   .panel-head{text-align:center}
   .cat-title{position:relative;display:inline-block;font-family:${FONT_DISPLAY};font-size:24px;font-weight:500;color:${INK}}
   .cat-hl{position:absolute;bottom:2px;left:0;z-index:-1;height:10px;width:100%;opacity:.35}
-  .chart{margin:0 auto;width:100%;max-width:380px;aspect-ratio:1/1}
+  .chart{margin:0 auto;width:100%;aspect-ratio:1/1}
   .scores{display:grid;grid-template-columns:1fr 1fr;column-gap:32px;row-gap:24px}
   .row{display:flex;flex-direction:column;gap:4px}
   .row-top{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:15px;color:${MUTED}}
