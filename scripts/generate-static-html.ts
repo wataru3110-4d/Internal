@@ -46,9 +46,22 @@ const RING = "#e6e6e6";
 const RING_NUM = "#d5d5d5";
 const AVG = "#999999";
 
+// 日本語・本文（埋め込みはせず、システムの日本語フォントにフォールバック）
 const FONT_SANS =
   '"Noto Sans JP", system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif';
-const FONT_NUM = '"Barlow Condensed", "Noto Sans JP", sans-serif';
+// 見出し・名前・ラベル（Figma: Akshar Medium）。Akshar を埋め込む
+const FONT_DISPLAY = '"Akshar", "Barlow Condensed", "Noto Sans JP", sans-serif';
+// 大きな数値（Figma: DIN Alternate Bold）。DINは商用フォントのため、近似の Barlow を埋め込む
+const FONT_NUMBER = '"Barlow", "Barlow Condensed", "Noto Sans JP", sans-serif';
+
+// Latin サブセットの woff2 を base64 で @font-face に埋め込む（外部依存なし・単体HTMLで完結）
+const fontFace = (family: string, weight: number, file: string): string => {
+  const b64 = readFileSync(resolve(ROOT, "scripts/fonts", file)).toString("base64");
+  return `@font-face{font-family:"${family}";font-style:normal;font-weight:${weight};font-display:swap;src:url(data:font/woff2;base64,${b64}) format("woff2")}`;
+};
+const FONT_FACE_CSS =
+  fontFace("Akshar", 500, "akshar-500-latin.woff2") +
+  fontFace("Barlow", 700, "barlow-700-latin.woff2");
 
 // ---- ユーティリティ ----------------------------------------------------------
 const esc = (s: unknown): string =>
@@ -126,7 +139,7 @@ function radarSvg(
       const p = pointAt(cx, cy, scale(ring), axisAngle(0, n));
       return `<text x="${(p.x + 6).toFixed(2)}" y="${(p.y + 4).toFixed(
         2,
-      )}" font-size="11" fill="${RING_NUM}" style="font-family:${FONT_NUM}">${ring}</text>`;
+      )}" font-size="11" fill="${RING_NUM}" style="font-family:${FONT_DISPLAY}">${ring}</text>`;
     })
     .join("");
 
@@ -254,19 +267,19 @@ const SHEET_CSS = `
   .sheet{width:1920px;height:1080px;background:#fff;display:flex;flex-direction:column}
   .sheet-head{display:flex;align-items:center;justify-content:space-between;background:${HEADER_BG};padding:32px 72px}
   .who{display:flex;align-items:center;gap:30px}
-  .avatar{width:78px;height:78px;border-radius:50%;background:rgba(77,77,77,.1);display:flex;align-items:center;justify-content:center;font-family:${FONT_NUM};font-size:33px;color:${INK}}
-  .who-name{font-family:${FONT_NUM};font-size:40.5px;font-weight:500;line-height:1;color:${INK}}
-  .who-team{font-size:18px;color:${INK};margin-top:3px}
+  .avatar{width:78px;height:78px;border-radius:50%;background:rgba(77,77,77,.1);display:flex;align-items:center;justify-content:center;font-family:${FONT_SANS};font-size:33px;color:${INK}}
+  .who-name{font-family:${FONT_DISPLAY};font-size:40.5px;font-weight:500;line-height:1;color:${INK}}
+  .who-team{font-family:${FONT_DISPLAY};font-size:18px;font-weight:500;color:${INK};margin-top:3px}
   .total{width:320px;display:flex;align-items:flex-end;justify-content:space-between;border-bottom:1px solid ${INK};padding-bottom:12px}
-  .total-label{font-family:${FONT_NUM};font-size:24px;font-weight:500;color:${INK}}
-  .total-val{font-family:${FONT_NUM};font-size:56px;font-weight:700;line-height:1;color:${INK}}
+  .total-label{font-family:${FONT_DISPLAY};font-size:24px;font-weight:500;color:${INK}}
+  .total-val{font-family:${FONT_NUMBER};font-size:56px;font-weight:700;line-height:1;color:${INK}}
   .legend-row{display:flex;align-items:center;gap:8px;padding:32px 40px 0;font-size:12px;color:${MUTED}}
   .legend-label{white-space:nowrap}
   .body{display:flex;flex:1;align-items:stretch;padding:24px 40px 32px}
   .panel{flex:1;display:flex;flex-direction:column;gap:16px;padding:0 24px}
   .panel + .panel{border-left:1px solid ${DIVIDER}}
   .panel-head{text-align:center}
-  .cat-title{position:relative;display:inline-block;font-family:${FONT_NUM};font-size:24px;font-weight:500;color:${INK}}
+  .cat-title{position:relative;display:inline-block;font-family:${FONT_DISPLAY};font-size:24px;font-weight:500;color:${INK}}
   .cat-hl{position:absolute;bottom:2px;left:0;z-index:-1;height:10px;width:100%;opacity:.35}
   .chart{margin:0 auto;width:100%;max-width:380px;aspect-ratio:1/1}
   .scores{display:grid;grid-template-columns:1fr 1fr;column-gap:48px;row-gap:24px}
@@ -276,7 +289,7 @@ const SHEET_CSS = `
   .row-val{flex-shrink:0;font-variant-numeric:tabular-nums}
   .row-bar{display:flex;width:100%;height:2px;border-radius:30px;overflow:hidden;background:${DIVIDER}}
   .row-bar-fill{height:2px;border-radius:30px}
-  .comment{margin-top:auto;white-space:pre-line;border-radius:6px;background:#f5f5f5;padding:16px;font-size:12px;line-height:1.7;color:${MUTED};min-height:96px}
+  .comment{margin-top:auto;white-space:pre-line;border-radius:6px;background:#f5f5f5;padding:16px;font-size:12px;line-height:1.5;color:${MUTED};min-height:96px}
   .comment-empty{color:#bbbbbb}
 `;
 
@@ -300,7 +313,7 @@ function htmlDoc(title: string, bodyInner: string, extraCss = ""): string {
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>${esc(title)}</title>
-<style>${SHEET_CSS}${PAGE_CSS}${extraCss}</style>
+<style>${FONT_FACE_CSS}${SHEET_CSS}${PAGE_CSS}${extraCss}</style>
 </head>
 <body>${bodyInner}</body>
 </html>`;
@@ -359,14 +372,14 @@ const cards = entries
 const indexCss = `
   body{background:#f3f4f6;padding:40px}
   .wrap{max-width:880px;margin:0 auto}
-  h1{font-family:${FONT_NUM};font-size:28px;color:${INK};margin-bottom:4px}
+  h1{font-family:${FONT_DISPLAY};font-size:28px;font-weight:500;color:${INK};margin-bottom:4px}
   .meta{color:${MUTED};font-size:14px;margin-bottom:24px}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
   .card{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;text-decoration:none;color:${INK}}
   .card:hover{border-color:#cbd5e1;box-shadow:0 1px 6px rgba(0,0,0,.08)}
-  .card-avatar{width:44px;height:44px;border-radius:50%;background:rgba(77,77,77,.1);display:flex;align-items:center;justify-content:center;font-family:${FONT_NUM};font-size:18px}
+  .card-avatar{width:44px;height:44px;border-radius:50%;background:rgba(77,77,77,.1);display:flex;align-items:center;justify-content:center;font-family:${FONT_SANS};font-size:18px}
   .card-name{flex:1;font-size:16px}
-  .card-total{font-family:${FONT_NUM};font-size:24px;font-weight:700}
+  .card-total{font-family:${FONT_NUMBER};font-size:24px;font-weight:700}
   .all-link{display:inline-block;margin-bottom:24px;color:#2563eb;font-size:14px}
 `;
 const indexInner = `<div class="wrap">
