@@ -21,9 +21,9 @@ export const RING = "#e6e6e6";
 export const RING_NUM = "#d5d5d5";
 export const AVG = "#999999";
 
-// 日本語・本文（埋め込みはせず、システムの日本語フォントにフォールバック）
+// 英字は Akshar、日本語はシステムの日本語フォントにフォールバック（Akshar は欧文のみ）
 export const FONT_SANS =
-  '"Noto Sans JP", system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif';
+  '"Akshar", "Noto Sans JP", system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif';
 // 英字はすべて Akshar に統一（見出し・名前・ラベル・数値）。Figma の DIN Alternate 箇所も Akshar
 export const FONT_DISPLAY = '"Akshar", "Noto Sans JP", sans-serif';
 export const FONT_NUMBER = FONT_DISPLAY;

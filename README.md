@@ -14,8 +14,9 @@
 
 ```bash
 npm install
-# 任意: public/fonts に Noto Sans JP / Barlow Condensed の .woff2 を配置
-#       （未配置でもシステムフォントにフォールバックして動作します）
+# 欧文は Akshar（public/fonts/akshar-500-latin.woff2 を同梱・self-host）
+# 任意: public/fonts に Noto Sans JP の .woff2 を配置（未配置でもシステムの
+#       日本語フォントにフォールバックして動作します）
 ```
 
 ## 開発

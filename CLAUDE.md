@@ -136,8 +136,8 @@ npm run generate -- 入力.csv 出力先 "チーム名"        # 入出力・チ
 
 ## 7. 既知の差分・注意点（**要修正候補**）
 
-1. **フォント差分**: React は `num: Barlow Condensed`（`tailwind.config.ts`）。静的版/Figma は **Akshar**（`render.ts` の `FONT_DISPLAY`、自己完結HTMLは woff2 を base64 埋め込み）。
-   → 統一するなら React も Akshar を self-host（`src/index.css` の `@font-face` ＋ `public/fonts`）して `font-num` を差し替える。
+1. ~~フォント差分~~ **解消済み**: 全系統で **Akshar** に統一（欧文＝Akshar／日本語＝Noto Sans JP フォールバック）。
+   React は `public/fonts/akshar-500-latin.woff2` を self-host（`src/index.css` の `@font-face`、`tailwind.config.ts` の `sans`/`num` とも Akshar 優先）。静的版は同 woff2 を base64 埋め込み。Akshar は weight 500(Latin) のみなので太字は擬似ボールド。
 2. **レーダーの軸ラベル余白**: `RadarChart.tsx` の `viewBox` は `0 0 size size`（ラベル用余白なし）。静的版 `render.ts` は `padX=52 / padY=16` の余白あり。React 側は端のラベルが見切れる可能性 → React の viewBox にも余白を付けると一致する。
 3. **Figma のグリッド形状**: 現状の Figma 生成は**円（楕円）リング**。React/静的版は**多角形**リング。厳密一致させるなら Figma 側も多角形に。
 4. 3系統のデザインは**手動同期**。いずれかを直したら他2つ（と Figma）も必ず合わせる。
@@ -155,7 +155,7 @@ npm run generate -- 入力.csv 出力先 "チーム名"        # 入出力・チ
 - `npm test` 25件パス / `tsc -b` パス
 
 ### 次にやり得ること
-- §7 の差分（特にフォント統一）の解消
+- §7 の残差分（軸ラベル余白 / Figma の多角形リング）の解消
 - 実データ CSV（`public/data/assessments.csv`）の差し替え運用フロー整備
 - Figma 生成のスクリプト化（再現可能な書き出し手順をリポジトリに保存）
 
