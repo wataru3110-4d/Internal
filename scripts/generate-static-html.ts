@@ -49,19 +49,16 @@ const AVG = "#999999";
 // 日本語・本文（埋め込みはせず、システムの日本語フォントにフォールバック）
 const FONT_SANS =
   '"Noto Sans JP", system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif';
-// 見出し・名前・ラベル（Figma: Akshar Medium）。Akshar を埋め込む
-const FONT_DISPLAY = '"Akshar", "Barlow Condensed", "Noto Sans JP", sans-serif';
-// 大きな数値（Figma: DIN Alternate Bold）。DINは商用フォントのため、近似の Barlow を埋め込む
-const FONT_NUMBER = '"Barlow", "Barlow Condensed", "Noto Sans JP", sans-serif';
+// 英字はすべて Akshar に統一（見出し・名前・ラベル・数値）。Figma の DIN Alternate 箇所も Akshar
+const FONT_DISPLAY = '"Akshar", "Noto Sans JP", sans-serif';
+const FONT_NUMBER = FONT_DISPLAY;
 
 // Latin サブセットの woff2 を base64 で @font-face に埋め込む（外部依存なし・単体HTMLで完結）
 const fontFace = (family: string, weight: number, file: string): string => {
   const b64 = readFileSync(resolve(ROOT, "scripts/fonts", file)).toString("base64");
   return `@font-face{font-family:"${family}";font-style:normal;font-weight:${weight};font-display:swap;src:url(data:font/woff2;base64,${b64}) format("woff2")}`;
 };
-const FONT_FACE_CSS =
-  fontFace("Akshar", 500, "akshar-500-latin.woff2") +
-  fontFace("Barlow", 700, "barlow-700-latin.woff2");
+const FONT_FACE_CSS = fontFace("Akshar", 500, "akshar-500-latin.woff2");
 
 // ---- ユーティリティ ----------------------------------------------------------
 const esc = (s: unknown): string =>
@@ -113,33 +110,37 @@ function radarSvg(
       .filter(Boolean)
       .join(" ");
 
+  // グリッドの背景は同心円（Figma: gridType=circle）。リングは実線
   const rings = ringValues
     .map(
       (ring) =>
-        `<polygon points="${axes
-          .map((_, i) => {
-            const p = pointAt(cx, cy, scale(ring), axisAngle(i, n));
-            return `${p.x.toFixed(2)},${p.y.toFixed(2)}`;
-          })
-          .join(" ")}" fill="none" stroke="${RING}" stroke-width="1"/>`,
+        `<circle cx="${cx}" cy="${cy}" r="${scale(ring).toFixed(
+          2,
+        )}" fill="none" stroke="${RING}" stroke-width="1"/>`,
     )
     .join("");
 
+  // 放射軸（スポーク）は点線にして、円のリング（実線）と区別する
   const spokes = axes
     .map((_, i) => {
       const p = pointAt(cx, cy, radius, axisAngle(i, n));
       return `<line x1="${cx}" y1="${cy}" x2="${p.x.toFixed(2)}" y2="${p.y.toFixed(
         2,
-      )}" stroke="${RING}" stroke-width="1"/>`;
+      )}" stroke="${RING}" stroke-width="1" stroke-dasharray="2 3"/>`;
     })
     .join("");
 
+  // 目盛り数値は上スポーク上に中央寄せ。背景に白を敷いてリング線を避ける
   const ringNums = ringValues
     .map((ring) => {
       const p = pointAt(cx, cy, scale(ring), axisAngle(0, n));
-      return `<text x="${(p.x + 6).toFixed(2)}" y="${(p.y + 4).toFixed(
+      return `<rect x="${(p.x - 5).toFixed(2)}" y="${(p.y - 7).toFixed(
         2,
-      )}" font-size="11" fill="${RING_NUM}" style="font-family:${FONT_DISPLAY}">${ring}</text>`;
+      )}" width="10" height="14" fill="#ffffff"/><text x="${p.x.toFixed(2)}" y="${(
+        p.y + 4
+      ).toFixed(
+        2,
+      )}" font-size="12" fill="${RING_NUM}" text-anchor="middle" style="font-family:${FONT_DISPLAY}">${ring}</text>`;
     })
     .join("");
 
@@ -147,19 +148,23 @@ function radarSvg(
     .map((s) => {
       const pts = poly(scale, s.values);
       if (!pts) return "";
-      const dash = s.style === "dashed" ? ` stroke-dasharray="5 4"` : "";
+      // 平均（dashed）はできるだけ細い線・小さい点に
+      const isAvg = s.style === "dashed";
+      const dash = isAvg ? ` stroke-dasharray="4 3"` : "";
+      const strokeW = isAvg ? 1 : 2;
+      const dotR = isAvg ? 2 : 3.5;
       const fill = s.fill ? `${s.color}` : "none";
       const fillOp = s.fill ? 0.25 : 0;
       const dots = s.values
         .map((v, i) => {
           if (v === undefined) return "";
           const p = pointAt(cx, cy, scale(v), axisAngle(i, n));
-          return `<circle cx="${p.x.toFixed(2)}" cy="${p.y.toFixed(2)}" r="${
-            s.style === "dashed" ? 2.5 : 3.5
-          }" fill="${s.color}"/>`;
+          return `<circle cx="${p.x.toFixed(2)}" cy="${p.y.toFixed(
+            2,
+          )}" r="${dotR}" fill="${s.color}"/>`;
         })
         .join("");
-      return `<polygon points="${pts}" fill="${fill}" fill-opacity="${fillOp}" stroke="${s.color}" stroke-width="2"${dash} stroke-linejoin="round"/>${dots}`;
+      return `<polygon points="${pts}" fill="${fill}" fill-opacity="${fillOp}" stroke="${s.color}" stroke-width="${strokeW}"${dash} stroke-linejoin="round"/>${dots}`;
     })
     .join("");
 
@@ -272,7 +277,7 @@ const SHEET_CSS = `
   .who-team{font-family:${FONT_DISPLAY};font-size:18px;font-weight:500;color:${INK};margin-top:3px}
   .total{width:320px;display:flex;align-items:flex-end;justify-content:space-between;border-bottom:1px solid ${INK};padding-bottom:12px}
   .total-label{font-family:${FONT_DISPLAY};font-size:24px;font-weight:500;color:${INK}}
-  .total-val{font-family:${FONT_NUMBER};font-size:56px;font-weight:700;line-height:1;color:${INK}}
+  .total-val{font-family:${FONT_NUMBER};font-size:56px;font-weight:500;line-height:1;color:${INK}}
   .legend-row{display:flex;align-items:center;gap:8px;padding:32px 40px 0;font-size:12px;color:${MUTED}}
   .legend-label{white-space:nowrap}
   .body{display:flex;flex:1;align-items:stretch;padding:24px 40px 32px}
@@ -379,7 +384,7 @@ const indexCss = `
   .card:hover{border-color:#cbd5e1;box-shadow:0 1px 6px rgba(0,0,0,.08)}
   .card-avatar{width:44px;height:44px;border-radius:50%;background:rgba(77,77,77,.1);display:flex;align-items:center;justify-content:center;font-family:${FONT_SANS};font-size:18px}
   .card-name{flex:1;font-size:16px}
-  .card-total{font-family:${FONT_NUMBER};font-size:24px;font-weight:700}
+  .card-total{font-family:${FONT_NUMBER};font-size:24px;font-weight:500}
   .all-link{display:inline-block;margin-bottom:24px;color:#2563eb;font-size:14px}
 `;
 const indexInner = `<div class="wrap">
