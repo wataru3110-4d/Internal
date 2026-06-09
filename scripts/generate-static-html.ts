@@ -194,9 +194,16 @@ function categoryPanel(category: CategoryDef, person: Person, average: Record<st
   const scoreRows = category.items
     .map((item) => {
       const v = person.scores[item.id];
-      return `<div class="row"><span class="row-label">${esc(item.label)}</span><span class="row-val">${
+      // 数値に合わせた線（Figma: ラベル/数値の下に高さ2pxの帯。色付き幅 = score / SCALE_MAX）
+      const pct = v === undefined ? 0 : Math.max(0, Math.min(100, (v / SCALE_MAX) * 100));
+      return `<div class="row">
+        <div class="row-top"><span class="row-label">${esc(item.label)}</span><span class="row-val">${
         v ?? "—"
-      }</span></div>`;
+      }</span></div>
+        <div class="row-bar"><span class="row-bar-fill" style="width:${pct}%;background:${
+        category.color
+      }"></span></div>
+      </div>`;
     })
     .join("");
 
@@ -264,10 +271,13 @@ const SHEET_CSS = `
   .legend{display:flex;align-items:center;gap:16px;font-size:12px;color:${MUTED}}
   .legend span{display:flex;align-items:center;gap:6px}
   .chart{margin:0 auto;width:100%;max-width:380px;aspect-ratio:1/1}
-  .scores{display:grid;grid-template-columns:1fr 1fr;column-gap:32px}
-  .row{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid ${DIVIDER};padding:6px 0;font-size:15px;color:${MUTED}}
+  .scores{display:grid;grid-template-columns:1fr 1fr;column-gap:48px;row-gap:24px}
+  .row{display:flex;flex-direction:column;gap:4px}
+  .row-top{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:15px;color:${MUTED}}
   .row-label{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .row-val{flex-shrink:0;font-family:${FONT_NUM};font-variant-numeric:tabular-nums}
+  .row-val{flex-shrink:0;font-variant-numeric:tabular-nums}
+  .row-bar{display:flex;width:100%;height:2px;border-radius:30px;overflow:hidden;background:${DIVIDER}}
+  .row-bar-fill{height:2px;border-radius:30px}
   .comment{margin-top:auto;white-space:pre-line;border-radius:6px;background:#f5f5f5;padding:16px;font-size:12px;line-height:1.7;color:${MUTED};min-height:96px}
   .comment-empty{color:#bbbbbb}
 `;
