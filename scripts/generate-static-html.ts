@@ -207,17 +207,11 @@ function categoryPanel(category: CategoryDef, person: Person, average: Record<st
     })
     .join("");
 
-  const legend = `<div class="legend">
-      <span><svg width="24" height="6"><line x1="0" y1="3" x2="24" y2="3" stroke="${category.color}" stroke-width="2"/></svg>本人</span>
-      <span><svg width="24" height="6"><line x1="0" y1="3" x2="24" y2="3" stroke="${AVG}" stroke-width="2" stroke-dasharray="5 4"/></svg>チーム平均</span>
-    </div>`;
-
   return `<section class="panel">
     <div class="panel-head">
       <h2 class="cat-title"><span class="cat-hl" style="background:${category.color}"></span>${esc(
         category.label,
       )}</h2>
-      ${legend}
     </div>
     <div class="chart">${svg}</div>
     <div class="scores">${scoreRows}</div>
@@ -245,6 +239,10 @@ function sheet(person: Person, data: AssessmentData): string {
         person,
       )}</span></div>
     </header>
+    <div class="legend-row">
+      <span class="legend-label">チーム平均</span>
+      <svg width="60" height="2" aria-hidden><line x1="0" y1="1" x2="60" y2="1" stroke="${AVG}" stroke-width="1.5" stroke-dasharray="5 4"/></svg>
+    </div>
     <div class="body">${panels}</div>
   </div>`;
 }
@@ -254,22 +252,22 @@ const SHEET_CSS = `
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:${FONT_SANS};color:${INK};background:#f3f4f6}
   .sheet{width:1920px;height:1080px;background:#fff;display:flex;flex-direction:column}
-  .sheet-head{display:flex;align-items:center;justify-content:space-between;background:${HEADER_BG};padding:32px 75px}
+  .sheet-head{display:flex;align-items:center;justify-content:space-between;background:${HEADER_BG};padding:32px 72px}
   .who{display:flex;align-items:center;gap:30px}
   .avatar{width:78px;height:78px;border-radius:50%;background:rgba(77,77,77,.1);display:flex;align-items:center;justify-content:center;font-family:${FONT_NUM};font-size:33px;color:${INK}}
-  .who-name{font-family:${FONT_NUM};font-size:40px;font-weight:700;line-height:1;color:${INK}}
+  .who-name{font-family:${FONT_NUM};font-size:40.5px;font-weight:500;line-height:1;color:${INK}}
   .who-team{font-size:18px;color:${INK};margin-top:3px}
   .total{width:320px;display:flex;align-items:flex-end;justify-content:space-between;border-bottom:1px solid ${INK};padding-bottom:12px}
-  .total-label{font-family:${FONT_NUM};font-size:24px;font-weight:700;color:${INK}}
+  .total-label{font-family:${FONT_NUM};font-size:24px;font-weight:500;color:${INK}}
   .total-val{font-family:${FONT_NUM};font-size:56px;font-weight:700;line-height:1;color:${INK}}
-  .body{display:flex;flex:1;align-items:stretch;padding:32px 40px}
+  .legend-row{display:flex;align-items:center;gap:8px;padding:32px 40px 0;font-size:12px;color:${MUTED}}
+  .legend-label{white-space:nowrap}
+  .body{display:flex;flex:1;align-items:stretch;padding:24px 40px 32px}
   .panel{flex:1;display:flex;flex-direction:column;gap:16px;padding:0 24px}
   .panel + .panel{border-left:1px solid ${DIVIDER}}
-  .panel-head{display:flex;align-items:center;justify-content:space-between}
-  .cat-title{position:relative;display:inline-block;font-family:${FONT_NUM};font-size:24px;font-weight:700;color:${INK}}
-  .cat-hl{position:absolute;bottom:4px;left:0;z-index:-1;height:9px;width:100%;opacity:.35}
-  .legend{display:flex;align-items:center;gap:16px;font-size:12px;color:${MUTED}}
-  .legend span{display:flex;align-items:center;gap:6px}
+  .panel-head{text-align:center}
+  .cat-title{position:relative;display:inline-block;font-family:${FONT_NUM};font-size:24px;font-weight:500;color:${INK}}
+  .cat-hl{position:absolute;bottom:2px;left:0;z-index:-1;height:10px;width:100%;opacity:.35}
   .chart{margin:0 auto;width:100%;max-width:380px;aspect-ratio:1/1}
   .scores{display:grid;grid-template-columns:1fr 1fr;column-gap:48px;row-gap:24px}
   .row{display:flex;flex-direction:column;gap:4px}
