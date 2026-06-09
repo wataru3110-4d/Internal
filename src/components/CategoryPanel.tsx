@@ -21,7 +21,7 @@ export function CategoryPanel({ category, person, average }: CategoryPanelProps)
   const comment = person.comments[category.key as CategoryKey];
 
   return (
-    <section className="flex flex-1 flex-col gap-4 px-6">
+    <section className="flex w-[520px] shrink-0 flex-col gap-4 px-6">
       <div className="flex items-center justify-between">
         <h2 className="relative inline-block font-num text-[24px] font-bold text-ink">
           <span
@@ -33,7 +33,7 @@ export function CategoryPanel({ category, person, average }: CategoryPanelProps)
         <ScoreLegend color={category.color} />
       </div>
 
-      <div className="mx-auto aspect-square w-full max-w-[380px]">
+      <div className="mx-auto aspect-square w-full">
         <RadarChart
           axes={axes}
           max={SCALE_MAX}

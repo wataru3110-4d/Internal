@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { CATEGORIES } from "../lib/master-data";
 import type { AssessmentData, Person } from "../lib/types";
 import { CategoryPanel } from "./CategoryPanel";
@@ -20,14 +21,16 @@ export function AssessmentSheet({ person, data }: AssessmentSheetProps) {
       style={{ width: 1920, height: 1080 }}
     >
       <PersonHeader person={person} />
-      <div className="flex flex-1 items-stretch divide-x divide-[#eee] px-10 py-8">
-        {CATEGORIES.map((category) => (
-          <CategoryPanel
-            key={category.key}
-            category={category}
-            person={person}
-            average={data.teamAverage}
-          />
+      <div className="flex flex-1 items-stretch justify-center gap-[27.5px] py-8">
+        {CATEGORIES.map((category, i) => (
+          <Fragment key={category.key}>
+            {i > 0 && <div className="self-stretch border-l border-[#eee]" />}
+            <CategoryPanel
+              category={category}
+              person={person}
+              average={data.teamAverage}
+            />
+          </Fragment>
         ))}
       </div>
     </div>

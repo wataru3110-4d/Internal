@@ -15,7 +15,7 @@ export function ScoreList({ category, scores }: ScoreListProps) {
         return (
           <div
             key={item.id}
-            className="flex items-center justify-between gap-3 border-b border-[#eee] py-1.5 text-[15px] text-muted"
+            className="flex items-center justify-between gap-3 border-b border-[#eee] py-3 text-[15px] text-muted"
           >
             <span className="min-w-0 flex-1 truncate">{item.label}</span>
             <span className="shrink-0 font-num tabular-nums">
