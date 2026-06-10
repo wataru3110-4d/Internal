@@ -13,9 +13,10 @@ export default {
         muted: "#666666",
       },
       fontFamily: {
-        // Self-hosted fonts only; see src/index.css @font-face.
-        sans: ["Noto Sans JP", "system-ui", "sans-serif"],
-        num: ["Barlow Condensed", "Noto Sans JP", "sans-serif"],
+        // Akshar everywhere (self-hosted; see src/index.css @font-face).
+        // Akshar is Latin-only, so Japanese falls back to Noto Sans JP.
+        sans: ["Akshar", "Noto Sans JP", "system-ui", "sans-serif"],
+        num: ["Akshar", "Noto Sans JP", "sans-serif"],
       },
     },
   },
